@@ -23,6 +23,7 @@ RETURN_VALUE = """  []list 형태로 반환되며,
 
 import gspread
 import uuid
+import os
 
 def LOAD_BUGO(TARGET_YEAR):
 

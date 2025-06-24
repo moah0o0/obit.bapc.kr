@@ -15,7 +15,6 @@ const modal = document.querySelector('.modal');
 				lists[i].style.opacity = '1';	
 			}
 		}
-		window.scrollTo(0,0);
 	    modal.style.display = 'block';
 	    if (opt == "a") {
 	    	reset()

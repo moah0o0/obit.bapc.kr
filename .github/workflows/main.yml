@@ -25,7 +25,6 @@ jobs:
           pip install gspread
           pip install jinja2
           pip install uuid
-          pip install os
 
       - name: Run Python script
         run: python page_builder.py # 이곳에 실제 파이썬 파일명을 적어주세요.

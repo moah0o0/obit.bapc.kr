@@ -1,0 +1,39 @@
+name: REFRESH OBIT.BAPC.KR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential libffi-dev
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install gspread
+          pip install jinja2
+          pip install uuid          
+
+      - name: Run Python script
+        run: python page_builder.py # 이곳에 실제 파이썬 파일명을 적어주세요.
+
+      - name: Commit and push changes
+        if: steps.changed-files.outputs.files_changed == 'true'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update articles.json"
+          git push https://${{ secrets.GH_TOKEN }}@github.com/yeonjin1357/action_test.git HEAD:main

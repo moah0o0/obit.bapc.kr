@@ -32,11 +32,12 @@ jobs:
           PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
-      - name: Commit and push changes
-        if: steps.changed-files.outputs.files_changed == 'true'
+      - name: Commit & push
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          cd export
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
           git add .
-          git commit -m "Update articles.json"
-          git push https://${{ secrets.GH_TOKEN }}@github.com/yeonjin1357/action_test.git HEAD:main
+          git commit -m "Auto update pages"
+          git push https://${{ secrets.GH_TOKEN }}@github.com/moah0o0/obit.bapc.kr.git HEAD:main
+

@@ -89,7 +89,9 @@ def LOAD_BUGO(TARGET_YEAR):
 		return [display_key, year_key, month_key, age_key, id_key]
 
 	# 2. 구글 스프레드시트에서 데이터를 가져와 KEY값까지 입히기
-	
+
+	print(os.environ.get('PRIVATE_KEY'))
+	print(os.environ.get('PRIVATE_KEY_ID')
 	credentials = {
 		"type": "service_account",
 		"project_id": "bapc-croll",

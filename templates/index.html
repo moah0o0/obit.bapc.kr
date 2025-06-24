@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="./static/style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://kit.fontawesome.com/b49ddc422b.js" crossorigin="anonymous"></script>
+	<title>부산 공영장례 추모관</title>
+	<script type="text/javascript">
+		var db = {{VAR_BUGO_DATA | safe}}
+	</script>
+</head>
+<body>
+	<div class="pc_view">
+
+	</div>
+	<div class="mobile_view">
+		<!-- header -->
+		<div class="header" id="header_obj">
+			<div class="header-title">
+				부산 공영장례<br>추모관<small style="font-size: 16px;">({{VAR_TARGET_YEAR}}년)</small>
+			</div>
+			<div class="header-content">
+				<span class="header-content-bold">공영장례</span>는 무연고자 또는 장례를 치를 수 없는 분들에게 공공이 애도의 공간과 시간을 보장하는 것입니다. <span class="header-content-bold">부산시민 공영장례 조문단</span>은 16개 구군에 조문을 다니며 실질적 의미를 채우고 있습니다. 직접 조문가지 못하더라도 온라인 추모로 함께해 주세요.
+			</div>
+			<div class="logo_box">
+				<img src="./static/org_logo/logo.svg" class="logo_file">
+				<img src="./static/org_logo/logo-2.svg" class="logo_file">
+			</div>
+	        <div style="height: 20px; width: 100%;"></div>
+	        <div class="flow-text">
+	            <div class="flow-wrap">
+                	{% for COMMENT in VAR_COMMENTS %}
+                	<strong>[{{COMMENT[0]}}]</strong> {{COMMENT[1][:15]}}
+                	{% endfor %}
+	        	</div>
+	        </div>
+		</div>
+
+
+		<div class="flower_lines" id="flower_line">
+		</div>
+
+		<p style="font-size: 13px; text-align: center; color:white; padding:20px; background-color: #2d2d29; margin: 15px;">※ 본 데이터는 부산지역 16개 지자체 홈페이지에 게시된 것을 기준으로 합니다. 다만, 데이터 수집일 이후에 이뤄진 각 지자체의 부고 정보 수정은 반영되지 않으며, 각 지자체가 제공한 것이 아니라 자동화 프로그램을 통해 수집한 데이터이므로 실제 정보와 다를 수 있습니다.</p>
+
+		<div style="height:100px; margin-bottom: 200px;"></div>
+
+	</div>
+	<div class="icon_ribbon"></div>
+	<div class="menu">
+		<button class="menu_button leftside dark" onclick="location.href=`#`"><i class="fa-regular fa-comment-dots"></i>&nbsp;<strong>추모의말</strong><br>남기기</button>
+		<button class="menu_button light" onclick="modal_open('a', 'none')"><i class="fa-solid fa-sliders"></i>&nbsp;<strong>연령대</strong><br>살펴보기</button>
+		<button class="menu_button dark" onclick="modal_open('b', 'none')"><i class="fa-solid fa-sliders"></i>&nbsp;<strong>지역</strong><br>살펴보기</button>
+		<button class="menu_button rightside light" onclick="modal_open('c', 'none')"><i class="fa-solid fa-sliders"></i>&nbsp;<strong>장례연월</strong><br>살펴보기</button>
+	</div>
+<div class="modal">
+    <div class="modal_popup">
+    	<div id="modal_a">
+    		<p class="title">연령대 살펴보기</p>
+    		<p class="content">부고를 살펴보고 싶은<br>연령대의 리본을 클릭해보세요.</p>
+    		<div class="flower_lines">
+				<div class="flower_icon age0" onclick="SET_FILTER('age0')">
+					<p class='ribbon_name'>10대<small>미만</small></p>
+				</div>
+				<div class="flower_icon age10" onclick="SET_FILTER('age10')">
+					<p class='ribbon_name'>10대</p>
+				</div>
+				<div class="flower_icon age20" onclick="SET_FILTER('age20')">
+					<p class='ribbon_name'>20대</p>
+				</div>
+				<div class="flower_icon age30" onclick="SET_FILTER('age30')">
+					<p class='ribbon_name'>30대</p>
+				</div>
+				<div class="flower_icon age40" onclick="SET_FILTER('age40')">
+					<p class='ribbon_name'>40대</p>
+				</div>
+				<div class="flower_icon age50" onclick="SET_FILTER('age50')">
+					<p class='ribbon_name'>50대</p>
+				</div>
+				<div class="flower_icon age60" onclick="SET_FILTER('age60')">
+					<p class='ribbon_name'>60대</p>
+				</div>
+				<div class="flower_icon age70" onclick="SET_FILTER('age70')">
+					<p class='ribbon_name'>70대</p>
+				</div>
+				<div class="flower_icon age80" onclick="SET_FILTER('age80')">
+					<p class='ribbon_name'>80대</p>
+				</div>
+				<div class="flower_icon age90" onclick="SET_FILTER('age90')">
+					<p class='ribbon_name'>90대<small>이상</small></p>
+				</div>
+				<div class="flower_icon agenull" onclick="SET_FILTER('agenull')">
+					<p class='ribbon_name'>미상</small></p>
+				</div>
+	    		<p class="content" style="color: white;">※ '미상'은 지자체에서 생년월일을<br>공개하지 않은 분의 부고입니다.</p>
+			</div>
+    	</div>
+    	<div id="modal_b">
+    		<p class="title">지역 살펴보기</p>
+    		<p class="content">부고를 살펴보고 싶은<br>지역<small>(관할지자체)</small>을 선택해보세요.</p>
+    		<div class="goo_logo_lines">
+				<div class="goo_logo">
+					<img class="img_goo_logo 중구" src="./static/goo_logos/joonggo.svg" onclick="SET_FILTER('중구')">
+					<p class="goo_name">중구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 서구" src="./static/goo_logos/seogoo.svg" onclick="SET_FILTER('서구')">
+					<p class="goo_name">서구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 동구" src="./static/goo_logos/dongoo.svg" onclick="SET_FILTER('동구')">
+					<p class="goo_name">동구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 영도구" src="./static/goo_logos/yeongdo.svg" onclick="SET_FILTER('영도구')">
+					<p class="goo_name">영도구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 부산진구" src="./static/goo_logos/jin.svg" onclick="SET_FILTER('부산진구')">
+					<p class="goo_name">부산진구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 동래구" src="./static/goo_logos/dongnae.svg" onclick="SET_FILTER('동래구')">
+					<p class="goo_name">동래구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 남구" src="./static/goo_logos/namgu.svg" onclick="SET_FILTER('남구')">
+					<p class="goo_name">남구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 북구" src="./static/goo_logos/bukgo.svg" onclick="SET_FILTER('북구')">
+					<p class="goo_name">북구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 해운대구" src="./static/goo_logos/haundae.svg" onclick="SET_FILTER('해운대구')">
+					<p class="goo_name">해운대구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 사하구" src="./static/goo_logos/saha.svg" onclick="SET_FILTER('사하구')">
+					<p class="goo_name">사하구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 금정구" src="./static/goo_logos/geumjeong.svg" onclick="SET_FILTER('금정구')">
+					<p class="goo_name">금정구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 강서구" src="./static/goo_logos/gangseo.svg" onclick="SET_FILTER('강서구')">
+					<p class="goo_name">강서구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 연제구" src="./static/goo_logos/yeonje.svg" onclick="SET_FILTER('연제구')">
+					<p class="goo_name">연제구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 수영구" src="./static/goo_logos/sooyeong.svg" onclick="SET_FILTER('수영구')">
+					<p class="goo_name">수영구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 사상구" src="./static/goo_logos/sasang.svg" onclick="SET_FILTER('사상구')">
+					<p class="goo_name">사상구</p>
+				</div>
+				<div class="goo_logo">
+					<img class="img_goo_logo 기장군" src="./static/goo_logos/gijang.svg" onclick="SET_FILTER('기장군')">
+					<p class="goo_name">기장군</p>
+				</div>
+			</div>
+    	</div>
+    	<div id="modal_c">
+    		<p class="title">장례연월 살펴보기</p>
+    		<p class="content">월별로 발생한 장례를 구분해뒀습니다.<br>조회를 희망하는 달을 눌러보세요.</p>
+    		<div class="month_lines">
+				<div class="month_logo 1월 grey" onclick="SET_FILTER('1월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>1월</p>
+				</div>
+				<div class="month_logo 2월" onclick="SET_FILTER('2월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>2월</p>
+				</div>
+				<div class="month_logo 3월 grey" onclick="SET_FILTER('3월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>3월</p>
+				</div>
+				<div class="month_logo 4월" onclick="SET_FILTER('4월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>4월</p>
+				</div>
+				<div class="month_logo 5월 grey" onclick="SET_FILTER('5월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>5월</p>
+				</div>
+				<div class="month_logo 6월" onclick="SET_FILTER('6월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>6월</p>
+				</div>
+				<div class="month_logo 7월 grey" onclick="SET_FILTER('7월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>7월</p>
+				</div>
+				<div class="month_logo 8월" onclick="SET_FILTER('8월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>8월</p>
+				</div>
+				<div class="month_logo 9월 grey" onclick="SET_FILTER('9월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>9월</p>
+				</div>
+				<div class="month_logo 10월" onclick="SET_FILTER('10월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>10월</p>
+				</div>
+				<div class="month_logo 11월 grey" onclick="SET_FILTER('11월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>11월</p>
+				</div>
+				<div class="month_logo 12월" onclick="SET_FILTER('12월')">
+				    <i class="img_month_logo fa-regular fa-calendar"></i>
+				    <p class='month_name'>12월</p>
+				</div>
+			</div>
+    		<p class="description">
+    		{% for target_years in VAR_AVAILABLE_YEARS %}
+    			{% if VAR_TARGET_YEAR != target_years %}
+		    		<span onclick="location.href='./index_{{target_years}}.html'" style="text-align: center; display: block; background-color: rgba(255,255,255,0.1); padding:2px; cursor: pointer; margin: 5px; color:white; font-size: 100%;">{{target_years}}년 추모관으로 이동하기</span>
+    			{% endif %}
+    		{% endfor %}
+	    	</p>
+
+    	</div>
+    	<div id="modal_d">
+    		<p class="title">부고 살펴보기</p>
+    		<p class="content">삼가 고인의 명복을 빕니다.</p>
+    		<p class="description" id="modal_d_description"></p>
+
+    	</div>
+        <button type="button" class="close_btn" onclick="modal_close()">닫기</button>
+    </div>
+</div>
+</body>
+<script src="./static/modal.js"></script>
+<script src="./static/appear.js"></script>
+<script src="./static/filter.js"></script>
+</script>
+</body>
+</html>

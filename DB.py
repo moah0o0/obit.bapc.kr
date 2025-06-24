@@ -88,8 +88,22 @@ def LOAD_BUGO(TARGET_YEAR):
 		return [display_key, year_key, month_key, age_key, id_key]
 
 	# 2. 구글 스프레드시트에서 데이터를 가져와 KEY값까지 입히기
+	
+	credentials = {
+		"type": "service_account",
+		"project_id": "bapc-croll",
+		"private_key_id": os.environ.get('PRIVATE_KEY_ID'),
+		"private_key": os.environ.get('PRIVATE_KEY'),
+		"client_email": "databaseaccesor@bapc-croll.iam.gserviceaccount.com",
+		"client_id": "110468661734487274979",
+		"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+		"token_uri": "https://oauth2.googleapis.com/token",
+		"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+		"client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/databaseaccesor%40bapc-croll.iam.gserviceaccount.com",
+		"universe_domain": "googleapis.com"
+	}
 
-	gspread_account = gspread.service_account("bapc-croll-2575a43daab5.json")
+	gspread_account = gspread.service_account_from_dict(credentials)
 	db_document = gspread_account.open_by_url("https://docs.google.com/spreadsheets/d/1kseND7MHBpoOhr6xm5svHvjDMZxCRGKsa7Lc-bNxSLo/edit?usp=sharing")
 	db_worksheet = db_document.worksheet("now")
 

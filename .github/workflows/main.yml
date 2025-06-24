@@ -1,6 +1,7 @@
 name: REFRESH OBIT.BAPC.KR
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:

@@ -7,7 +7,51 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://kit.fontawesome.com/b49ddc422b.js" crossorigin="anonymous"></script>
 	<title>부산 공영장례 추모관</title>
+  <style type="text/css">
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size:85%;
+      border-radius: 25px;
+      background-color: #333;
+      color: #fff;
+    }
+    .tabs button.active {
+      background-color: #555;
+      font-weight: bold;
+    }
+    .back_button:hover {
+      background-color: rgba(255,255,255,0.15);
+    }
+
+    .back_button {
+      padding: 3px 50% 3px 2%;
+      font-size: 85%;
+      cursor: pointer;
+    }
+
+    .information {
+      margin-top:15px;
+      text-align: center !important; 
+      display: block; 
+      line-height: 170%;
+      background-color: rgba(255,255,255,0.1); 
+      padding:15px; 
+      word-wrap: break-word; 
+      color:white; 
+      font-size: 95%;
+      letter-spacing: -1px;
+    }
+        
+  </style>
 </head>
+
 <body>
 	<div class="pc_view">
 
@@ -15,20 +59,124 @@
 	<div class="mobile_view">
 		<!-- header -->
 		<div class="header" id="header_obj">
-			<div class="header-title">
-				부산 공영장례<br>추모관<small style="font-size: 16px;"></small>
-			</div>
-			<div class="header-content">
-				<span class="header-content-bold">공영장례</span>는 무연고자 또는 장례를 치를 수 없는 분들에게 공공이 애도의 공간과 시간을 보장하는 것입니다. <span class="header-content-bold">부산시민 공영장례 조문단</span>은 16개 구군에 조문을 다니며 실질적 의미를 채우고 있습니다. 직접 조문가지 못하더라도 온라인 추모로 함께해 주세요.
-			</div>
-			<div class="logo_box">
-				<img src="./static/org_logo/logo.svg" class="logo_file">
-				<img src="./static/org_logo/logo-2.svg" class="logo_file">
-			</div>
-	        <div style="height: 20px; width: 100%;"></div>
+	      <div style="width: 100%; padding-left:15px; padding-top:10px; color:white;">
+	        <span onclick="location.href='/'" class="back_button"><i class="fa-solid fa-arrow-rotate-left"></i>&nbsp;<strong>이전 화면</strong>으로 되돌아가기</span>
+	      </div>
+		</div>
+        
+        <p class="header-title">자세히 살펴보기</p>        
+        
+        <p class="header-content">본 추모관에는 고인 <span style="color: rgba(0, 255, 255, 0.9); font-weight: 700;"> 총  {{ VAR_ANALYZED_DATA["총인원"] | safe }}분</span>의 부고 정보가 등록되어 있습니다. 연령대별로, 관할 지자체별로, 월별로 발생한 부고의 건수를 아래의 버튼을 눌러 확인해보세요.<br><a href="#" style="color:rgba(0, 255, 255, 0.9);" onclick="modal_open('a', 'none')">참고사항 확인하기</a> </p>
+		
+		<br>
+
+	    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	    
+	    <div name="차트" style="width:85%; margin:0 auto;">
+	          <div class="tabs">
+	            <button class="tab-btn active" onclick="showChart('age')">연령대별</button>
+	            <button class="tab-btn" onclick="showChart('region')">지자체별</button>
+	            <button class="tab-btn" onclick="showChart('month')">월별</button>
+	          </div>
+
+	          <canvas id="ageChart"></canvas>
+	          <canvas id="regionChart" style="display:none;"></canvas>
+	          <canvas id="monthChart" style="display:none;"></canvas>
+
+	          <script>
+	            const commonOptions = {
+	              responsive: true,
+	              plugins: {
+	                legend: { display: false },
+	                tooltip: { enabled: true }
+	              },
+	              scales: {
+	                x: {
+	                  ticks: { color: '#fff' },
+	                  grid: { color: '#444' }
+	                },
+	                y: {
+	                  ticks: { color: '#fff' },
+	                  grid: { color: '#444' }
+	                }
+	              }
+	            };
+
+			    const data = {
+			      age: {
+			        labels: {{ VAR_ANALYZED_DATA["연령대"]["label"] | safe }},
+			        values: {{ VAR_ANALYZED_DATA["연령대"]["value"] | safe }}
+			      },
+			      region: {
+			        labels: {{ VAR_ANALYZED_DATA["지자체"]["label"] | safe }},
+			        values: {{ VAR_ANALYZED_DATA["지자체"]["value"] | safe }}
+			      },
+			      month: {
+			        labels: {{ VAR_ANALYZED_DATA["연월"]["label"] | safe }},
+			        values: {{ VAR_ANALYZED_DATA["연월"]["value"] | safe }}      
+			      }
+			    };
+
+			    const ageChart = new Chart(document.getElementById('ageChart'), {
+			      type: 'bar',
+			      data: {
+			        labels: data.age.labels,
+			        datasets: [{
+			          label: '연령대별 공영장례 건수',
+			          data: data.age.values,
+			          backgroundColor: 'rgba(75, 192, 192, 0.6)'
+			        }]
+			      },
+			      options: commonOptions
+			    });
+
+			    const regionChart = new Chart(document.getElementById('regionChart'), {
+			      type: 'bar',
+			      data: {
+			        labels: data.region.labels,
+			        datasets: [{
+			          label: '구군별 공영장례 건수',
+			          data: data.region.values,
+			          backgroundColor: 'rgba(153, 102, 255, 0.6)'
+			        }]
+			      },
+			      options: commonOptions
+			    });
+
+			    const monthChart = new Chart(document.getElementById('monthChart'), {
+			      type: 'line',
+			      data: {
+			        labels: data.month.labels,
+			        datasets: [{
+			          label: '월별 공영장례 건수',
+			          data: data.month.values,
+			          backgroundColor: 'rgba(255, 159, 64, 0.6)',
+			          borderColor: 'rgba(255, 159, 64, 1)',
+			          fill: true
+			        }]
+			      },
+			      options: commonOptions
+			    });
+
+			    function showChart(chart) {
+			      document.querySelectorAll('canvas').forEach(c => c.style.display = 'none');
+			      document.getElementById(chart + 'Chart').style.display = 'block';
+
+			      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+			      event.target.classList.add('active');
+			    }
+			  </script>
 		</div>
 
-<div id="disqus_thread" style="width: 85%;  margin: 0 auto;"></div>
+
+<br>
+        <p class="header-title">추모의 말 남기기</p>
+        <p class="header-content">직접 조문가지 못하더라도 온라인 추모로 함께해 주세요. 아래의 댓글창을 통해 추모의 말을 남기실 수 있습니다.</p>
+
+
+<br>
+<div style="width: 85%;  margin: 0 auto;">
+<div id="disqus_thread"></div>
 <script>
     (function() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
@@ -37,13 +185,28 @@
     (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>2
 
-	</div>
-	<div class="icon_ribbon"></div>
-	<div class="menu">
-		<button class="menu_button leftside dark" onclick="location.href=`/index.html`"><i class="fa-solid fa-arrow-rotate-left"></i>&nbsp;<strong>이전 페이지</strong><br>되돌아가기</button>
-	</div>
+	</div>  
+</div>
+    <div class="modal">
+      <div class="modal_popup">
+          <div id="modal_a">
+            <p class="title">참고해주세요</p>
+            <p class="content">
+        <span class="header-content-bold">본 추모관은 지자체별 홈페이지에 게시된 부고를<br>실시간으로 반영하고 있지 않습니다.</span>
+        <span class="information">
+        부산지역에서 발생한 공영장례의 부고는 관할하는 지자체 홈페이지에 각각 나뉘어 게시되고 있습니다. 그러나 지자체별로 부고를 게시하는 양식이 달라, 추모관 데이터베이스(DB)에 부고 정보를 등록하기 위해서는 <span class="header-content-bold">검수작업(형식 통일 / 누락된 정보 확인)</span>을 일일이 거쳐야 합니다. 이로 인해 많은 시간이 소요되다보니, 지자체별 홈페이지와 차이가 발생하고 있습니다.</span>
+        </p>
+             <a style="color:rgba(0, 255, 255, 0.9); font-size:85%;" href="https://docs.google.com/spreadsheets/d/1kseND7MHBpoOhr6xm5svHvjDMZxCRGKsa7Lc-bNxSLo/edit?usp=sharing">※ 추모관 데이터베이스 바로가기<small>(구글 스프레드시트)</small></a>
+          <div style="height:6px;"> </div>
+          </div>
+        <button type="button" class="close_btn" onclick="modal_close()">닫기</button>
+      </div>
+    </div>
+
+<script src="./static/modal.js"></script>
+
 </body>
 </script>
 </body>

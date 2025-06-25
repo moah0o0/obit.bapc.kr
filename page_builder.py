@@ -6,32 +6,9 @@ _PATH = """
 	
 	index.html : 메인 연도 페이지(2025년)	
 	index_0000.html : 각 연도별 페이지(메인 연도 페이지도 포함됨)
-	comments.html : 댓글+통계 페이지(disqus 기반)
+	together.html : 댓글 페이지(disqus 기반)
 	
 """
-
-import feedparser
-from html import unescape
-from bs4 import BeautifulSoup
-
-def get_disqus_comments():
-    rss_url = "https://obit-bapc-kr.disqus.com/comments.rss"
-    feed = feedparser.parse(rss_url)
-
-    results = []
-
-    for entry in feed.entries:
-        author = entry.get("author", "알 수 없음")
-        
-        # description은 HTML이므로, 텍스트로 변환
-        raw_html = entry.get("description", "")
-        soup = BeautifulSoup(unescape(raw_html), "html.parser")
-        comment = soup.get_text().strip()
-
-        results.append((author, comment))
-
-    return results
-
 
 class SETTING:
 
@@ -72,7 +49,6 @@ class INDEX_PAGES:
 			"VAR_BUGO_DATA":DB.LOAD_BUGO(TARGET_YEAR=TARGET_YEAR),
 			"VAR_TARGET_YEAR":TARGET_YEAR,
 			"VAR_AVAILABLE_YEARS":self.AVAILABLE_YEARS,
-			"VAR_COMMENTS":get_disqus_comments()
 		}
 
 		render_html = TEMPLATE.render(DATA)
@@ -89,21 +65,24 @@ class COMMENT_PAGE:
 	def __init__(self):
 		self.TEMPLATE = self.GET_TEMPLATE()
 		for file in os.listdir("./export"):
-			if file.startswith("comment"):
+			if file.startswith("together"):
 				os.remove("./export/" + file)
 
 		html = self.EXPORT_RENDER()
-		self.SAVE_HTML("./export/comment.html", html)
+		self.SAVE_HTML("./export/together.html", html)
 
 	def GET_TEMPLATE(self):
-		file = open("./templates/comment.html", "r", encoding='utf-8')
+		file = open("./templates/together.html", "r", encoding='utf-8')
 		template_html = file.read()
 		file.close()
 		return Template(template_html)
 
 	def EXPORT_RENDER(self):	
 		TEMPLATE = self.TEMPLATE
-		render_html = TEMPLATE.render()
+		DATA = {
+			"VAR_ANALYZED_DATA":self.GET_ANALYZE()
+		}
+		render_html = TEMPLATE.render(DATA)
 		return render_html
 
 	def SAVE_HTML(self, EXPORT_DIRECTORY, HTML):
@@ -111,6 +90,95 @@ class COMMENT_PAGE:
 		file.write(HTML)
 		file.close()
 		return True
+
+
+	def GET_ANALYZE(self):
+		
+		all_bugos = []
+
+		for target_year in SETTING.BUGO_AVAILABLE_YEARS:
+			all_bugos = all_bugos + DB.LOAD_BUGO(TARGET_YEAR=target_year)
+
+
+		def age_analyze():
+			
+			labels = ["10대", "20대", "30대", "40대", "50대", "60대", "70대", "80대"]
+			# 10대 이하 및 90대 이상 미포함 / 반영 필요
+
+			values = []
+
+			for label in labels:
+				values.append(len([i for i in all_bugos if i[14] == label.replace("대","")]))
+
+			under_teen = len([i for i in all_bugos if i[14] == "0"])
+			over_nineteen = len([i for i in all_bugos if i[14] == "90"])
+			null_age = len([i for i in all_bugos if i[14] == "null"])
+
+			labels = ["10세 미만"] + labels + ["90세 이상"] + ["미상"]
+			values = [under_teen] + values + [over_nineteen] + [null_age]
+
+
+			return (labels, values)
+
+
+		def region_analyze():
+			
+			labels = ["해운대구", "서구", "남구", "북구", "동구", "기장군", "금정구", "중구", "연제구", "사상구", "영도구", "부산진구", "동래구", "사하구", "수영구", "강서구"]
+			# 10대 이하 및 90대 이상 미포함 / 반영 필요
+
+			values = []
+
+			for label in labels:
+				values.append(len([i for i in all_bugos if i[10] == label]))
+
+			return (labels, values)
+
+		def yearmonth_analyze():
+
+			labels = []
+			values = []
+
+			def get_year_month_value(year, month):
+				if len(month) == 1:
+					month = "0" + month
+				return "{}-{}".format(year, month)
+
+			labels = [get_year_month_value(i[12], i[13]) for i in all_bugos]
+			labels = set(labels)
+			labels = list(labels)
+			labels.sort()
+			
+			for label in labels:
+				counts = [i for i in all_bugos if label == get_year_month_value(i[12], i[13])]
+				counts = len(counts)
+				values.append(counts)
+
+			return (labels, values)
+
+
+
+		age_data = age_analyze()
+		region_data = region_analyze()
+		yearmonth_data = yearmonth_analyze()
+		
+		RESULT = {
+			"연령대":{
+				"label":age_data[0],
+				"value":age_data[1]
+			},
+			"지자체":{
+				"label":region_data[0],
+				"value":region_data[1]
+			},
+			"연월":{
+				"label":yearmonth_data[0],
+				"value":yearmonth_data[1]
+			},
+			"총인원":len(all_bugos)
+		}
+
+		return RESULT
+
 
 INDEX_PAGES()
 COMMENT_PAGE()

@@ -6,7 +6,7 @@ _PATH = """
 	
 	index.html : 메인 연도 페이지(2025년)	
 	index_0000.html : 각 연도별 페이지(메인 연도 페이지도 포함됨)
-	comments.html : 댓글 페이지(disqus 기반)
+	comments.html : 댓글+통계 페이지(disqus 기반)
 	
 """
 
@@ -60,6 +60,33 @@ class INDEX_PAGES:
 		file.close()
 		return True
 
+class COMMENT_PAGE:
 
+	def __init__(self):
+		self.TEMPLATE = self.GET_TEMPLATE()
+		for file in os.listdir("./export"):
+			if file.startswith("comment"):
+				os.remove("./export/" + file)
+
+		html = self.EXPORT_RENDER()
+		self.SAVE_HTML("./export/comment.html", html)
+
+	def GET_TEMPLATE(self):
+		file = open("./templates/comment.html", "r", encoding='utf-8')
+		template_html = file.read()
+		file.close()
+		return Template(template_html)
+
+	def EXPORT_RENDER(self):	
+		TEMPLATE = self.TEMPLATE
+		render_html = TEMPLATE.render()
+		return render_html
+
+	def SAVE_HTML(self, EXPORT_DIRECTORY, HTML):
+		file = open(EXPORT_DIRECTORY, 'w', encoding="utf-8")
+		file.write(HTML)
+		file.close()
+		return True
 
 INDEX_PAGES()
+COMMENT_PAGE()

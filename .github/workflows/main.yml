@@ -2,6 +2,8 @@ name: REFRESH OBIT.BAPC.KR
 
 on:
   push:
+    paths-ignore:
+      - 'export/**'
   workflow_dispatch:
 
 jobs:

@@ -1,4 +1,4 @@
-name: REFRESH OBIT.BAPC.KR
+name: page_build
 
 on:
   push:

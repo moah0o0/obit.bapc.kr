@@ -1,11 +1,12 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: deploy_page
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["page_build"]  # 위 A 워크플로우의 이름
+    types:
+      - completed              # completed: 성공, 실패 모두
+
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:

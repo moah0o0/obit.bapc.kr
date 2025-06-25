@@ -10,6 +10,29 @@ _PATH = """
 	
 """
 
+import feedparser
+from html import unescape
+from bs4 import BeautifulSoup
+
+def get_disqus_comments():
+    rss_url = "https://obit-bapc-kr.disqus.com/comments.rss"
+    feed = feedparser.parse(rss_url)
+
+    results = []
+
+    for entry in feed.entries:
+        author = entry.get("author", "알 수 없음")
+        
+        # description은 HTML이므로, 텍스트로 변환
+        raw_html = entry.get("description", "")
+        soup = BeautifulSoup(unescape(raw_html), "html.parser")
+        comment = soup.get_text().strip()
+
+        results.append((author, comment))
+
+    return results
+
+
 class SETTING:
 
 	# 페이지를 생성할 연도 목록
@@ -49,6 +72,7 @@ class INDEX_PAGES:
 			"VAR_BUGO_DATA":DB.LOAD_BUGO(TARGET_YEAR=TARGET_YEAR),
 			"VAR_TARGET_YEAR":TARGET_YEAR,
 			"VAR_AVAILABLE_YEARS":self.AVAILABLE_YEARS,
+			"VAR_COMMENTS":get_disqus_comments()
 		}
 
 		render_html = TEMPLATE.render(DATA)
